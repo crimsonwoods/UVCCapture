@@ -89,7 +89,7 @@ enum ERRORS {
 	MEMORY_QUEUEING_FAILED,
 	MEMORY_DEQUEUEING_FAILED,
 	INSUFFICIENT_MEMORY,
-	PERMISSION_DENIED,
+	NOT_PERMITTED,
 };
 
 /* Internal APIs */
@@ -280,8 +280,8 @@ static int read_frame(app_args_t const *args, video_dev_t const *dev, int index)
 	fd = open(path, O_WRONLY | O_CREAT, 0666);
 	if (0 > fd) {
 		if (EPERM == errno) {
-			LOGE("Permission denied to create new file (%s).", path);
-			result = PERMISSION_DENIED;
+			LOGE("Operation not permitted to create new file (%s).", path);
+			result = NOT_PERMITTED;
 		} else {
 			LOGE("Failed to create new file (%s) (%s).", path, strerror(errno));
 			result = IO_FILE_NOT_CREATED;
@@ -322,8 +322,8 @@ static int open_video_device(app_args_t const *args, video_dev_t *dev) {
 			return VIDEO_DEVICE_BUSY;
 		}
 		if (EPERM == errno) {
-			LOGE("Permission denied.");
-			return PERMISSION_DENIED;
+			LOGE("Operation not permitted.");
+			return NOT_PERMITTED;
 		}
 		LOGE("Unknown error (%s).", strerror(errno));
 		return VIDEO_DEVICE_OPEN_FAILED;
