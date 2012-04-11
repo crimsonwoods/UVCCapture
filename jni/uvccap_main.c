@@ -215,10 +215,11 @@ static int write_frame(uvcc_handle_t handle, app_args_t const *args, void const 
 			result = IO_FILE_NOT_CREATED;
 		}
 	} else {
-		ptr = (uint8_t const*)ptr;
+		ptr = (uint8_t const*)buf;
 		for (wrote = 0; wrote < size; ) {
 			n = write(fd, ptr + wrote, size - wrote);
 			if (n < 0) {
+				LOGE("failed to write file (%s).\n", strerror(errno));
 				break;
 			}
 			wrote += n;
