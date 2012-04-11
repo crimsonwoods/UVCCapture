@@ -58,6 +58,7 @@ typedef struct video_dev_t_ {
 static void print_capability(struct v4l2_capability const *caps);
 static void print_format_desc(struct v4l2_fmtdesc const *desc);
 static uint32_t to_v4l2_pixel_format(int format);
+static uint32_t from_v4l2_pixel_format(uint32_t format);
 static int init_buffer(video_dev_t *dev);
 static int read_frame(uint8_t * const buf, uint32_t buf_size, video_dev_t const *dev);
 
@@ -162,6 +163,16 @@ static uint32_t to_v4l2_pixel_format(int format) {
 		return PIXEL_FORMATS[DEF_PIXEL_FORMAT];
 	}	
 	return PIXEL_FORMATS[format];
+}
+
+static uint32_t from_v4l2_pixel_format(uint32_t format) {
+	int i;
+	for (i = 0; PIXEL_FORMATS[i]; ++i) {
+		if (PIXEL_FORMATS[i] == format) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 static int init_buffer(video_dev_t *dev) {
@@ -586,6 +597,6 @@ uint32_t uvcc_get_pixel_format(uvcc_handle_t handle) {
 	if (NULL == dev) {
 		return -1;
 	}
-	return dev->format.fmt.pix.pixelformat;
+	return from_v4l2_pixel_format(dev->format.fmt.pix.pixelformat);
 }
 
